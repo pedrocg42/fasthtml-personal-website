@@ -1,0 +1,33 @@
+name: personal-website
+
+install:
+  run:
+    - uv pip install -r requirements/requirements-dev.txt
+    - uv pip install -U -r requirements/requirements.txt
+    - pre-commit install
+
+uninstall:
+  run:
+    - uv pip uninstall personal-website
+    - uv pip freeze | xargs uv pip uninstall
+    - uv pip install lume
+
+steps:
+  reinstall:
+    run:
+      - lume -uninstall
+      - lume -install
+  lint:
+    run:
+      - ruff check --fix $PACKAGE_NAME
+      - ruff format $PACKAGE_NAME
+  check-requirements:
+    run: pip-audit -v $EXTRA_INDEX_URL -r requirements/requirements.txt
+  static-analysis:
+    run: mypy $PACKAGE_NAME
+  test:
+    run: pytest -v -s
+  docs:
+    run: |
+      uv pip install -r requirements/docs-requirements.txt
+      mkdocs build

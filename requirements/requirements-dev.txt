@@ -1,0 +1,5 @@
+pre-commit<4
+ruff<1
+commitizen<4
+pip-audit
+mypy<2
